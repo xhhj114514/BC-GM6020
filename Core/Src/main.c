@@ -21,7 +21,7 @@
 #include "can.h"
 #include "usart.h"
 #include "gpio.h"
-
+#include "tim.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "BSP.h"
@@ -35,8 +35,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define ANGLERATIO 8192.0f
-#define CURRATIO 16384.0f
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -48,17 +47,7 @@
 
 /* USER CODE BEGIN PV */
 
-struct MotorData
-{
-    uint32_t ID;
-    uint16_t angle;   // 电机角度�??0-8191�??
-    int16_t rpm;        // 电机转�?�（rpm�??
-    int16_t current;    // 实时电流（A�??
-    uint8_t temp;    // 温度
-    float realANGLE;
-    float realSPD;
-    float realCUR;
-}MotorData;
+
 
 
 // uint8_t rdata[8]  = {0};
@@ -117,6 +106,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   BSP_CAN_Init();
+  HAL_TIM_Base_Start_IT(&htim13);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -127,7 +117,8 @@ int main(void)
     {
       TargetSPD +=50;
     }
-    //BSP_GM6020_SETVOL(0,(int16_t)TargetSPD,(int16_t)TargetSPD,(int16_t)TargetSPD,(int16_t)TargetSPD);
+    BSP_GM6020_SETVOL(0,(int16_t)TargetSPD,(int16_t)TargetSPD,(int16_t)TargetSPD,(int16_t)TargetSPD);
+    HAL_Delay(40);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -215,29 +206,5 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
-{
-  if(hcan == &hcan1)
-  {
-    HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &RxHeader, rdata);
-    switch(RxHeader.StdId)
-    {
-      case 0x205:
-      {
-        MotorData.ID = RxHeader.StdId-0X204;
-        MotorData.angle = rdata[0]<<8 | rdata[1];
-        MotorData.rpm = -(rdata[2]<<8 | rdata[3]);//顺时针正
-        MotorData.current = rdata[4]<<8 | rdata[5];
-        MotorData.temp = rdata[6];
-        MotorData.realANGLE = (float)MotorData.angle / ANGLERATIO * 360.0f; // 电机角度转换为实际角度
-        MotorData.realSPD = (float)MotorData.rpm / 60.0f*6.283185307; // 电机转速转换为实际转速
-        MotorData.realCUR = (float)MotorData.current / CURRATIO; // 电流转换为实际电流
-      }
-      break;
 
-      default:
-      break;
-    }
-  }
-}
 

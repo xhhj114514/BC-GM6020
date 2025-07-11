@@ -5,6 +5,22 @@
 #include "main.h"
 #include "can.h"
 
+#define ANGLERATIO 8192.0f
+#define CURRATIO 16384.0f
+
+typedef struct 
+{
+    uint32_t ID;
+    uint16_t angle;   // 电机角度�??0-8191�??
+    int16_t rpm;        // 电机转�?�（rpm�??
+    int16_t current;    // 实时电流（A�??
+    uint8_t temp;    // 温度
+    float realANGLE;
+    float realSPD;
+    float realCUR;
+}MotorData_t;
+
+extern MotorData_t MotorData;
 
 HAL_StatusTypeDef BSP_CAN_Filter_Init(CAN_HandleTypeDef *hhcan);
 void BSP_CAN_Init();

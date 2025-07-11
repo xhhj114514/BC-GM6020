@@ -1,6 +1,7 @@
 #include "BSP_CAN.h"
 
-
+CAN_RxHeaderTypeDef RxHeader;
+MotorData_t MotorData;
 HAL_StatusTypeDef BSP_CAN_Filter_Init(CAN_HandleTypeDef *hhcan)
 {
     CAN_FilterTypeDef can_filt=
@@ -111,4 +112,26 @@ void BSP_GM6020_SETCUR(uint8_t id_range, int16_t i1, int16_t i2, int16_t i3, int
   HAL_CAN_AddTxMessage(&hcan1, &tx_header, tx_data,(uint32_t*)CAN_TX_MAILBOX0); 
 }
 
-
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
+{
+    uint8_t rdata[8]={0};
+  if(hcan == &hcan1)
+  {
+    HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &RxHeader, rdata);
+    switch(RxHeader.StdId)
+    {
+      case 0x205:
+      {
+        MotorData.ID = RxHeader.StdId-0X204;
+        MotorData.angle = rdata[0]<<8 | rdata[1];
+        MotorData.rpm = -(rdata[2]<<8 | rdata[3]);//顺时针正
+        MotorData.current = rdata[4]<<8 | rdata[5];
+        MotorData.temp = rdata[6];
+        MotorData.realANGLE = (float)MotorData.angle / ANGLERATIO * 360.0f; // 电机角度转换为实际角度
+        MotorData.realSPD = (float)MotorData.rpm / 60.0f*6.283185307; // 电机转速转换为实际转速
+        MotorData.realCUR = (float)MotorData.current / CURRATIO; // 电流转换为实际电流
+        break;
+      }
+    }
+  }
+}
