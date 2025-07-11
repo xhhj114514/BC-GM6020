@@ -1,0 +1,18 @@
+#ifndef BSP_CAN_H
+#define BSP_CAN_H
+
+#pragma once
+#include "main.h"
+#include "can.h"
+
+
+HAL_StatusTypeDef BSP_CAN_Filter_Init(CAN_HandleTypeDef *hhcan);
+void BSP_CAN_Init();
+uint8_t  BSP_CAN_RXFlag(CAN_HandleTypeDef *hcan);
+HAL_StatusTypeDef BSP_CAN_Transmit(CAN_HandleTypeDef *hcan, uint32_t StdId, uint8_t *data, uint8_t len);
+void BSP_CAN_Receive(CAN_HandleTypeDef *hcan, uint32_t *StdId, uint8_t *data, uint8_t *len);
+
+void BSP_GM6020_SETVOL(uint8_t id_range, int16_t v1, int16_t v2, int16_t v3, int16_t v4);
+void BSP_GM6020_SETCUR(uint8_t id_range, int16_t i1, int16_t i2, int16_t i3, int16_t i4);
+
+#endif // !BSP_CAN_H
