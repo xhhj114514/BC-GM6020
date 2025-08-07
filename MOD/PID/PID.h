@@ -10,12 +10,6 @@ typedef enum {
     PID_INCREMENTAL // 增量型PID
 } PIDType_t;
 
-// 低通滤波器结构体
-typedef struct {
-    float alpha;      // 滤波系数 (0 < alpha < 1)
-    float last_output; // 上一次滤波输出
-} LowPassFilter_t;
-
 // PID控制器结构体
 typedef struct {
     float kp;               // 比例增益
@@ -35,9 +29,6 @@ typedef struct {
 } PIDController_t;
 
 
-void LPF_Init(LowPassFilter_t *lpf, float alpha);
-float LPF_Compute(LowPassFilter_t *lpf, float input);
-
 void PID_Init(PIDController_t *pid, float kp, float ki, float kd, 
               float integral_limit, float output_limit, 
               float *setpoint, float *feedback, float *output,
@@ -46,9 +37,8 @@ void PID_Init(PIDController_t *pid, float kp, float ki, float kd,
 void PID_SetParams(PIDController_t *pid, float kp, float ki, float kd);
 void PID_SetIntegralLimit(PIDController_t *pid, float integral_limit);
 void PID_SetOutputLimit(PIDController_t *pid, float output_limit);
-void PID_Compute(PIDController_t *pid, LowPassFilter_t *lpf, uint32_t current_tick);
+void PID_Compute(PIDController_t *pid);
 void PID_Reset(PIDController_t *pid);
-
 
 
 #endif // !PID_h

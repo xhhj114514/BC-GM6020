@@ -25,6 +25,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "BSP.h"
+#include "PID.h"
 #include "printf.h"
 /* USER CODE END Includes */
 
@@ -46,19 +47,10 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
-
-
-
-// uint8_t rdata[8]  = {0};
-// uint32_t RxId = 0,cnt = 0;
-// uint8_t length = 0;
-
-uint8_t adata[8]  = {1};
-uint8_t rdata[8]  = {0},length = 0;
-uint32_t RxId = 0;
-uint16_t TargetSPD = 0;
-CAN_RxHeaderTypeDef RxHeader;
+float TargetSPD = 0.0;
+float SPDOUT = 0.0;
+PIDController_t SPDPID;
+PIDController_t ANGPID;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -104,9 +96,10 @@ int main(void)
   MX_CAN1_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-
   BSP_CAN_Init();
   HAL_TIM_Base_Start_IT(&htim13);
+  PID_Init(&SPDPID,2500,0.1,1000,3000,25000,&TargetSPD,&MotorData.ACCANG ,&SPDOUT,PID_POSITIONAL);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -115,9 +108,10 @@ int main(void)
   {
     if(HAL_GPIO_ReadPin(USERKEY_GPIO_Port,USERKEY_Pin) == GPIO_PIN_RESET)
     {
-      TargetSPD +=50;
+      TargetSPD =10;
     }
-    BSP_GM6020_SETVOL(0,(int16_t)TargetSPD,(int16_t)TargetSPD,(int16_t)TargetSPD,(int16_t)TargetSPD);
+    PID_Compute(&SPDPID);
+    BSP_GM6020_SETVOL(0,(int16_t)SPDOUT,(int16_t)SPDOUT,(int16_t)SPDOUT,(int16_t)SPDOUT);
     HAL_Delay(40);
     /* USER CODE END WHILE */
 

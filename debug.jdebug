@@ -22,12 +22,12 @@ void OnProjectLoad (void) {
   //
   // Dialog-generated settings
   //
-  Project.AddPathSubstitute ("D:/TM32/BC-GM6020", "$(ProjectDir)");
-  Project.AddPathSubstitute ("d:/tm32/bc-gm6020", "$(ProjectDir)");
   Project.SetDevice ("Cortex-M4");
   Project.SetHostIF ("USB", "");
   Project.SetTargetIF ("SWD");
-  Project.SetTIFSpeed ("4 MHz");
+  Project.SetTIFSpeed ("10 MHz");
+  Project.AddPathSubstitute ("D:/TM32/BC-GM6020", "$(ProjectDir)");
+  Project.AddPathSubstitute ("d:/tm32/bc-gm6020", "$(ProjectDir)");
   Project.AddSvdFile ("$(InstallDir)/Config/CPU/Cortex-M4F.svd");
   Project.AddSvdFile ("D:/TM32/GENERAL-FILES/cmsis-svd-stm32/stm32f4/STM32F407.svd");
   //

@@ -10,7 +10,9 @@
         "oledfont.h": "c",
         "gpio.h": "c",
         "usb_device.h": "c",
-        "bsp.h": "c"
+        "bsp.h": "c",
+        "cmath": "c",
+        "cstdlib": "c"
     },
     "cmake.sourceDirectory": "C:/Users/Administrator/Desktop/TM32/F407VET6_DSP_UART1/Drivers/CMSIS/NN"
 }

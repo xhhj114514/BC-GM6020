@@ -79,7 +79,7 @@ void BSP_GM6020_SETVOL(uint8_t id_range, int16_t v1, int16_t v2, int16_t v3, int
   tx_header.IDE   = CAN_ID_STD;
   tx_header.RTR   = CAN_RTR_DATA;
   tx_header.DLC   = 8;
-
+  
   tx_data[0] = (v1>>8)&0xff;
   tx_data[1] =    (v1)&0xff;
   tx_data[2] = (v2>>8)&0xff;
@@ -123,13 +123,19 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
       case 0x205:
       {
         MotorData.ID = RxHeader.StdId-0X204;
+        float dang = (float)(rdata[0]<<8 | rdata[1]) - (float)MotorData.angle;
+        if( fabs(dang) > 0.9*ANGLERATIO)
+        {
+            MotorData.rotation += dang > 0 ? -2*__PI : 2*__PI;
+        }
         MotorData.angle = rdata[0]<<8 | rdata[1];
         MotorData.rpm = -(rdata[2]<<8 | rdata[3]);//顺时针正
         MotorData.current = rdata[4]<<8 | rdata[5];
         MotorData.temp = rdata[6];
-        MotorData.realANGLE = (float)MotorData.angle / ANGLERATIO * 360.0f; // 电机角度转换为实际角度
         MotorData.realSPD = (float)MotorData.rpm / 60.0f*6.283185307; // 电机转速转换为实际转速
         MotorData.realCUR = (float)MotorData.current / CURRATIO; // 电流转换为实际电流
+        MotorData.ACCANG = MotorData.rotation + MotorData.angle/ANGLERATIO*2*__PI;
+        MotorData.Force = MotorData.realCUR * 0.741f; // 电流转力矩比例0.741Nm/A
         break;
       }
     }

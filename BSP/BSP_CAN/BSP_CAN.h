@@ -3,10 +3,15 @@
 
 #pragma once
 #include "main.h"
+#include "math.h"
 #include "can.h"
 
 #define ANGLERATIO 8192.0f
 #define CURRATIO 16384.0f
+#define __PI     3.141592f
+
+
+
 
 typedef struct 
 {
@@ -15,9 +20,11 @@ typedef struct
     int16_t rpm;        // 电机转�?�（rpm�??
     int16_t current;    // 实时电流（A�??
     uint8_t temp;    // 温度
-    float realANGLE;
     float realSPD;
     float realCUR;
+    float Force;
+    float rotation;
+    float ACCANG;
 }MotorData_t;
 
 extern MotorData_t MotorData;
