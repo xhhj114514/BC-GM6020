@@ -6,7 +6,7 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "mingw32-make -j32",
+            "command": "mingw32-make -j8",
             "group":{
                 "kind": "build",
                 "isDefault": true
@@ -20,7 +20,9 @@
         {
             "label": "flash with cmsis-dap",
             "type": "shell",
-            "command": "openocd -f ${workspaceFolder}/interface/cmsis-dap.cfg -f ${workspaceFolder}/target/stm32f4x.cfg -c init -c 'reset halt; wait_halt; flash write_image erase build/${workspaceFolderBasename}.bin 0x08000000' -c reset -c shutdown"
+            "command": "openocd -f ${workspaceFolder}/interface/cmsis-dap.cfg -f ${workspaceFolder}/target/stm32f4x.cfg -c init -c 'reset halt; wait_halt; flash write_image erase build/${workspaceFolderBasename}.bin 0x08000000' -c reset -c shutdown",
+            "dependsOn": "build"
+        
         }
     ]
 }
