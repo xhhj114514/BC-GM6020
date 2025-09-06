@@ -93,12 +93,12 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM5_Init();
   /* USER CODE BEGIN 2 */
-
+  
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in cmsis_os2.c) */
   MX_FREERTOS_Init();
-
+  
   /* Start scheduler */
   osKernelStart();
 

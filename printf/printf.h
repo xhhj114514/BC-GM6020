@@ -41,6 +41,12 @@ extern "C" {
 #endif
 
 
+#define LOG(fmt, ...) \
+printf( "|DEBUG|%s.%s:%d | " fmt "\r\n", __FILE__, __func__, __LINE__, ##__VA_ARGS__);
+
+
+
+
 /**
  * Output a character to a custom device like UART, used by the printf() function
  * This function is declared here only. You have to write your custom implementation somewhere

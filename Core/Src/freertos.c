@@ -89,6 +89,7 @@ void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer, StackTy
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
+  LOG("Initializing FreeRTOS");
   HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_2);
   HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_3);
@@ -181,7 +182,6 @@ void StartSerialTask(void const * argument)
   static uint8_t SerialName[]="Serial Task:: ";
   static uint8_t *S_Buff_Ptr=NULL;
   static BaseType_t STA;
-  static uint8_t I[32]="HELLO\r\n";
   /* Infinite loop */
   for(;;)
   {
