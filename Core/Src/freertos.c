@@ -58,7 +58,15 @@ osMessageQId SerialQueueHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
-
+void StuckLOG(const char*p)
+{
+    uint8_t i = 0;
+    while(p[i] != '\0')
+    {
+        printf("%c",p[i]);
+        i++;
+    }
+}
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void const * argument);
@@ -89,7 +97,7 @@ void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer, StackTy
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-  LOG("Initializing FreeRTOS");
+  LOG("Initializing FreeRTOS %f\r\n",1145141919.810);
   HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_2);
   HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_3);
@@ -185,7 +193,7 @@ void StartSerialTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    STA = xQueueReceive(SerialQueueHandle, &S_Buff_Ptr, 1);
+    STA = xQueuePeek(SerialQueueHandle, &S_Buff_Ptr, 1);
     switch(STA)
     {
       case pdPASS:
@@ -202,7 +210,8 @@ void StartSerialTask(void const * argument)
     }
     if(S_Flag == 1 && MSG_FLAG == 1)
     {
-      printf("%c\r\n",*S_Buff_Ptr);
+      StuckLOG(S_Buff_Ptr);
+      //printf("%c\r\n",S_Buff_Ptr[6]);
       S_Flag = 0;
     }
     osDelay(1);
