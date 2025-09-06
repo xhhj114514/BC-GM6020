@@ -25,7 +25,12 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "stdlib.h"
+#include "string.h"
 #include "tim.h"
+#include "gpio.h"
+#include "usart.h"
+#include "printf.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,7 +50,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-
+uint8_t S_Flag = 0 , MSG_FLAG=0;
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
 osThreadId SerialTaskHandle;
@@ -115,7 +120,7 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the queue(s) */
   /* definition and creation of SerialQueue */
-  osMessageQDef(SerialQueue, 16, uint16_t);
+  osMessageQDef(SerialQueue, 8, sizeof(uint8_t*));
   SerialQueueHandle = osMessageCreate(osMessageQ(SerialQueue), NULL);
 
   /* USER CODE BEGIN RTOS_QUEUES */
@@ -124,11 +129,11 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 256);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* definition and creation of SerialTask */
-  osThreadDef(SerialTask, StartSerialTask, osPriorityNormal, 0, 128);
+  osThreadDef(SerialTask, StartSerialTask, osPriorityNormal, 0, 1024);
   SerialTaskHandle = osThreadCreate(osThread(SerialTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -144,7 +149,7 @@ void MX_FREERTOS_Init(void) {
   * @retval None
   */
 /* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void const * argument)
+void StartDefaultTask(void const * argument)//Similar to SVC 
 {
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
@@ -153,11 +158,11 @@ void StartDefaultTask(void const * argument)
     __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, 5000);
     __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_2, 5000);
     __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_3, 5000);
-    osDelay(5);
+    osDelay(10);
     __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, 0);
     __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_2, 0);
     __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_3, 0);
-    osDelay(5);
+    osDelay(20);
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -172,9 +177,34 @@ void StartDefaultTask(void const * argument)
 void StartSerialTask(void const * argument)
 {
   /* USER CODE BEGIN StartSerialTask */
+  printf("Serial Task Started\r\n");
+  static uint8_t SerialName[]="Serial Task:: ";
+  static uint8_t *S_Buff_Ptr=NULL;
+  static BaseType_t STA;
+  static uint8_t I[32]="HELLO\r\n";
   /* Infinite loop */
   for(;;)
   {
+    STA = xQueueReceive(SerialQueueHandle, &S_Buff_Ptr, 1);
+    switch(STA)
+    {
+      case pdPASS:
+        MSG_FLAG = 1;
+        //memcpy(S_Buff_Ptr, I, 14);
+        break;
+      case errQUEUE_EMPTY:
+        MSG_FLAG = 0;
+        printf("Serial:: Queue Empty\r\n");
+        break;
+      default:
+        MSG_FLAG = 0;
+        break;
+    }
+    if(S_Flag == 1 && MSG_FLAG == 1)
+    {
+      printf("%c\r\n",*S_Buff_Ptr);
+      S_Flag = 0;
+    }
     osDelay(1);
   }
   /* USER CODE END StartSerialTask */
@@ -182,5 +212,27 @@ void StartSerialTask(void const * argument)
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  static uint8_t msg[]="KEY Pressed\r\n";
+  static uint8_t *msg_ptr = NULL;
+  msg_ptr = &msg;
+  if (GPIO_Pin == KEY_Pin)
+  {
+    
+    if (xQueueSendToBackFromISR(SerialQueueHandle, &msg_ptr, NULL) != pdTRUE)
+    {
+      printf("EXTI:: Queue Full\r\n");
+    }
+    __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, 0);
+    __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_2, 0);
+    __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_3, 0);
+    S_Flag = 1;
+    //printf("EXTI:: KEY Status Transmitted\r\n");
+    //osThreadSuspendAll();
+    //printf("Stop All\r\n");
+  }
+}
 
 /* USER CODE END Application */

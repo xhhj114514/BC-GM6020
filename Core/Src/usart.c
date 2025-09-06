@@ -20,11 +20,16 @@
 /* Includes ------------------------------------------------------------------*/
 #include "usart.h"
 
-/* USER CODE BEGIN 0 */
+UART_HandleTypeDef huart1;
 
+/* USER CODE BEGIN 0 */
+void _putchar(char ch)
+{
+  HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 100);
+}
 /* USER CODE END 0 */
 
-UART_HandleTypeDef huart1;
+
 
 /* USART1 init function */
 
