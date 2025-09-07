@@ -1,23 +1,22 @@
 
-
-Breakpoint=D:/TM32/BC-GM6020/Core/Src/freertos.c:162, State=BP_STATE_ON
 OpenDocument="startup_stm32f407xx.s", FilePath="D:/TM32/BC-GM6020/startup_stm32f407xx.s", Line=45
-OpenDocument="stm32f4xx_it.c", FilePath="D:/TM32/BC-GM6020/Core/Src/stm32f4xx_it.c", Line=79
-OpenDocument="freertos.c", FilePath="D:/TM32/BC-GM6020/Core/Src/freertos.c", Line=125
+OpenDocument="freertos.c", FilePath="D:/TM32/BC-GM6020/Core/Src/freertos.c", Line=156
 OpenDocument="main.c", FilePath="D:/TM32/BC-GM6020/Core/Src/main.c", Line=53
 OpenToolbar="Debug", Floating=0, x=0, y=0
-OpenWindow="Registers 1", DockArea=RIGHT, x=0, y=1, w=371, h=732, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0, FilteredItems=[], RefreshRate=1
+OpenWindow="Registers 1", DockArea=RIGHT, x=0, y=1, w=371, h=728, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0, FilteredItems=[], RefreshRate=1
 OpenWindow="Memory 1", DockArea=BOTTOM, x=1, y=0, w=1461, h=240, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0, EditorAddress=0x0
-OpenWindow="Watched Data 1", DockArea=LEFT, x=0, y=0, w=905, h=802, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
-OpenWindow="Functions", DockArea=LEFT, x=0, y=1, w=905, h=412, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
+OpenWindow="Watched Data 1", DockArea=LEFT, x=0, y=0, w=905, h=796, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
+OpenWindow="Functions", DockArea=LEFT, x=0, y=1, w=905, h=418, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
 OpenWindow="Console", DockArea=BOTTOM, x=0, y=0, w=1098, h=240, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0
-OpenWindow="RTOS", DockArea=RIGHT, x=0, y=0, w=371, h=482, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0, Showing=""
+OpenWindow="RTOS", DockArea=RIGHT, x=0, y=0, w=371, h=486, FilterBarShown=0, TotalValueBarShown=0, ToolBarShown=0, Showing=""
 TableHeader="Functions", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Address";"Size";"#Insts";"Source"], ColWidths=[1212;100;100;100;286]
 TableHeader="Power Sampling", SortCol="Index", SortOrder="ASCENDING", VisibleCols=["Index";"Time";"Ch 0"], ColWidths=[100;100;100]
 TableHeader="Registers 1", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Value";"Description"], ColWidths=[100;105;294]
-TableHeader="Watched Data 1", SortCol="Expression", SortOrder="ASCENDING", VisibleCols=["Expression";"Value";"Location";"Refresh"], ColWidths=[226;300;205;174]
+TableHeader="Watched Data 1", SortCol="Expression", SortOrder="ASCENDING", VisibleCols=["Expression";"Value";"Location";"Refresh"], ColWidths=[226;342;205;132]
 TableHeader="RegisterSelectionDialog", SortCol="None", SortOrder="ASCENDING", VisibleCols=[], ColWidths=[]
 TableHeader="TargetExceptionDialog", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Value";"Address";"Description"], ColWidths=[200;100;100;359]
 WatchedExpression="SerialQueueHandle", RefreshRate=5, Window=Watched Data 1
 WatchedExpression="msg", RefreshRate=5, Window=Watched Data 1
 WatchedExpression="S_Buff_Ptr", RefreshRate=5, Window=Watched Data 1
+WatchedExpression="msg_ptr", RefreshRate=5, Window=Watched Data 1
+WatchedExpression="I", RefreshRate=5, Window=Watched Data 1

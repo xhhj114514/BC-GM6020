@@ -187,6 +187,7 @@ void StartSerialTask(void const * argument)
 {
   /* USER CODE BEGIN StartSerialTask */
   printf("Serial Task Started\r\n");
+  vTaskSuspend(defaultTaskHandle);
   static uint8_t SerialName[]="Serial Task:: ";
   static uint8_t *S_Buff_Ptr=NULL;
   static BaseType_t STA;
@@ -198,7 +199,6 @@ void StartSerialTask(void const * argument)
     {
       case pdPASS:
         MSG_FLAG = 1;
-        //memcpy(S_Buff_Ptr, I, 14);
         break;
       case errQUEUE_EMPTY:
         MSG_FLAG = 0;
@@ -234,9 +234,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     {
       printf("EXTI:: Queue Full\r\n");
     }
-    __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, 0);
-    __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_2, 0);
-    __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_3, 0);
+    xTaskResumeFromISR(defaultTaskHandle);
     S_Flag = 1;
     //printf("EXTI:: KEY Status Transmitted\r\n");
     //osThreadSuspendAll();
