@@ -48,7 +48,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-float TargetSPD = 0.0 , TargetPos = 0.0;
+float TargetSPD = 0.0 , TargetPos = 0.0,FF = 0.0;
 float SPDOUT = 0.0;
 PIDController_t SPDPID;
 PIDController_t ANGPID;
@@ -99,21 +99,26 @@ int main(void)
   /* USER CODE BEGIN 2 */
   BSP_CAN_Init();
   HAL_TIM_Base_Start_IT(&htim13);
-  PID_Init(&SPDPID,48,200.0,0.0,3000,20000,0.010,&TargetSPD,&MotorData.Filted_RealSPD ,&SPDOUT,PID_POSITIONAL);//50,30.0,10.0,10000,25000,0.019
-  PID_Init(&ANGPID,25,0.0,0.0,100,300,0.0,&TargetPos,&MotorData.ACCANG ,&TargetSPD,PID_POSITIONAL);
+  FF = 100.0;
+  SPDPID.FF = &FF;
+  PID_Init(&SPDPID,48,200.0,0.0,3000,20000,0.0,&TargetSPD,&MotorData.Filted_RealSPD ,&SPDOUT,PID_POSITIONAL);//50,30.0,10.0,10000,25000,0.019
+  PID_Init(&ANGPID,50,0.0,0.1,100,320,0.0,&TargetPos,&MotorData.ACCANG ,&TargetSPD,PID_POSITIONAL);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    printf("%f,%f\r\n",MotorData.Filted_RealSPD,TargetSPD);
     if(HAL_GPIO_ReadPin(USERKEY_GPIO_Port,USERKEY_Pin) == GPIO_PIN_RESET)
     {
       //TargetSPD =10;
-      TargetPos += 2*__PI;
+      //TargetPos += 2*__PI;
+      TargetSPD = 100*sin(HAL_GetTick()/1000.0f*2*__PI/2);
     }
+    else TargetSPD = 0.0;
     PID_Compute(&SPDPID);
-    PID_Compute(&ANGPID);
+    //PID_Compute(&ANGPID);
     BSP_GM6020_SETVOL(0,(int16_t)SPDOUT,(int16_t)SPDOUT,(int16_t)SPDOUT,(int16_t)SPDOUT);
     //BSP_GM6020_SETCUR(0,(int16_t)SPDOUT,(int16_t)SPDOUT,(int16_t)SPDOUT,(int16_t)SPDOUT);
     

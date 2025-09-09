@@ -109,7 +109,7 @@ static void PID_PositionalCompute(PIDController_t *pid)
     }
     output = output > 0 ? output+(pid->DeadBand)*(pid->output_limit) : output-(pid->DeadBand)*(pid->output_limit);
     // 更新输出
-    *(pid->output) = output;
+    *(pid->output) = output + (*pid->FF)*(*(pid->setpoint));
 }
 
 /**

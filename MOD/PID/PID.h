@@ -24,6 +24,7 @@ typedef struct {
     float DeadBand;         //死区
     float *setpoint;        // 目标值指针
     float *feedback;        // 反馈值指针
+    float *FF;
     float *output;          // 输出值指针
     PIDType_t type;         // PID类型（位置型或增量型）
     uint32_t last_tick;     // 上一次调用HAL_GetTick的时间（毫秒）
