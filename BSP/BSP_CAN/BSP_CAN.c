@@ -96,7 +96,7 @@ void BSP_GM6020_SETCUR(uint8_t id_range, int16_t i1, int16_t i2, int16_t i3, int
   CAN_TxHeaderTypeDef tx_header;
   uint8_t             tx_data[8];
     
-  tx_header.StdId = (id_range == 0)?(0x1fe):(0x2fe);
+  tx_header.StdId = (id_range == 0)?(0x1FE):(0x2FE);
   tx_header.IDE   = CAN_ID_STD;
   tx_header.RTR   = CAN_RTR_DATA;
   tx_header.DLC   = 8;
@@ -114,13 +114,14 @@ void BSP_GM6020_SETCUR(uint8_t id_range, int16_t i1, int16_t i2, int16_t i3, int
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 {
+    MotorData.a = 0.02;
     uint8_t rdata[8]={0};
   if(hcan == &hcan1)
   {
     HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &RxHeader, rdata);
     switch(RxHeader.StdId)
     {
-      case 0x205:
+      case 0x206:
       {
         MotorData.ID = RxHeader.StdId-0X204;
         float dang = (float)(rdata[0]<<8 | rdata[1]) - (float)MotorData.angle;
@@ -129,13 +130,15 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
             MotorData.rotation += dang > 0 ? -2*__PI : 2*__PI;
         }
         MotorData.angle = rdata[0]<<8 | rdata[1];
-        MotorData.rpm = -(rdata[2]<<8 | rdata[3]);//顺时针正
+        MotorData.rpm = (rdata[2]<<8 | rdata[3]);//顺时针正
         MotorData.current = rdata[4]<<8 | rdata[5];
         MotorData.temp = rdata[6];
-        MotorData.realSPD = (float)MotorData.rpm / 60.0f*6.283185307; // 电机转速转换为实际转速
+        MotorData.realSPD = (float)MotorData.rpm; // 电机转速转换为实际转速
         MotorData.realCUR = (float)MotorData.current / CURRATIO; // 电流转换为实际电流
         MotorData.ACCANG = MotorData.rotation + MotorData.angle/ANGLERATIO*2*__PI;
         MotorData.Force = MotorData.realCUR * 0.741f; // 电流转力矩比例0.741Nm/A
+        MotorData.Filted_RealSPD = MotorData.Filted_RealSPD * (1 - MotorData.a) + MotorData.realSPD * MotorData.a; // 滤波
+        MotorData.last_realSPD = MotorData.realSPD;
         break;
       }
     }

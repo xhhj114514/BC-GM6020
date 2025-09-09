@@ -24,9 +24,10 @@
 #include "tim.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "BSP.h"
+#include "BSP_CAN.h"
 #include "PID.h"
 #include "printf.h"
+#include <math.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -98,7 +99,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   BSP_CAN_Init();
   HAL_TIM_Base_Start_IT(&htim13);
-  PID_Init(&SPDPID,2500,0.1,1000,3000,25000,&TargetSPD,&MotorData.ACCANG ,&SPDOUT,PID_POSITIONAL);
+  PID_Init(&SPDPID,50,200.0,0.0,3000,20000,0.015,&TargetSPD,&MotorData.Filted_RealSPD ,&SPDOUT,PID_POSITIONAL);//50,30.0,10.0,10000,25000,0.019
 
   /* USER CODE END 2 */
 
@@ -112,6 +113,8 @@ int main(void)
     }
     PID_Compute(&SPDPID);
     BSP_GM6020_SETVOL(0,(int16_t)SPDOUT,(int16_t)SPDOUT,(int16_t)SPDOUT,(int16_t)SPDOUT);
+    //BSP_GM6020_SETCUR(0,(int16_t)SPDOUT,(int16_t)SPDOUT,(int16_t)SPDOUT,(int16_t)SPDOUT);
+    
     HAL_Delay(40);
     /* USER CODE END WHILE */
 

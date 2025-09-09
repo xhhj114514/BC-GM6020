@@ -21,6 +21,7 @@ typedef struct {
     float last_error;       // 上一次误差
     float prev_error;       // 上上一次误差（用于增量型PID）
     float last_output;      // 上一次输出（用于增量型PID）
+    float DeadBand;         //死区
     float *setpoint;        // 目标值指针
     float *feedback;        // 反馈值指针
     float *output;          // 输出值指针
@@ -30,7 +31,7 @@ typedef struct {
 
 
 void PID_Init(PIDController_t *pid, float kp, float ki, float kd, 
-              float integral_limit, float output_limit, 
+              float integral_limit, float output_limit, float deadband, 
               float *setpoint, float *feedback, float *output,
               PIDType_t type);
 

@@ -133,7 +133,7 @@ C_INCLUDES =  \
 -IBSP\
 -IMOD\
 -IMOD/PID\
--IBSP/BSP_CAN  \
+-IBSP/BSP_CAN\
 -IDrivers/CMSIS/Include
 
 

@@ -16,7 +16,7 @@
  * @param type PID控制器类型，PIDType_t枚举值（PID_POSITIONAL或PID_INCREMENTAL）
  */
 void PID_Init(PIDController_t *pid, float kp, float ki, float kd, 
-              float integral_limit, float output_limit, 
+              float integral_limit, float output_limit, float deadband, 
               float *setpoint, float *feedback, float *output,
               PIDType_t type)
 {
@@ -25,6 +25,7 @@ void PID_Init(PIDController_t *pid, float kp, float ki, float kd,
     pid->kd = kd;
     pid->integral_limit = integral_limit;
     pid->output_limit = output_limit;
+    pid->DeadBand = deadband;
     pid->integral = 0.0f;
     pid->last_error = 0.0f;
     pid->prev_error = 0.0f;
@@ -106,7 +107,7 @@ static void PID_PositionalCompute(PIDController_t *pid)
     } else if (output < -pid->output_limit) {
         output = -pid->output_limit;
     }
-
+    output = output > 0 ? output+(pid->DeadBand)*(pid->output_limit) : output-(pid->DeadBand)*(pid->output_limit);
     // 更新输出
     *(pid->output) = output;
 }
@@ -145,7 +146,7 @@ static void PID_IncrementalCompute(PIDController_t *pid)
     } else if (output < -pid->output_limit) {
         output = -pid->output_limit;
     }
-
+    output = output > 0 ? output+(pid->DeadBand)*(pid->output_limit) : output-(pid->DeadBand)*(pid->output_limit);
     // 更新输出和上一次输出
     *(pid->output) = output;
     pid->last_output = output;
